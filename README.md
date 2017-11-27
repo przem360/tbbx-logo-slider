@@ -8,5 +8,5 @@ Simple image ticker for wordpress
 4. Add [tls-shortcode] to page or post
 
 ## changelog
-0.0.2 - 27-11-2017: url metabox for adding links to logos
-0.0.1 - 26-11-2017: initial version
+0.0.2 - 27-11-2017: url metabox for adding links to logos  
+0.0.1 - 26-11-2017: initial version  
