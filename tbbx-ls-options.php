@@ -23,10 +23,10 @@ add_action('admin_init', 'plugin_admin_init');
 function plugin_admin_init(){
 register_setting( 'tbbxls_options', 'tbbxls_options', 'tbbxls_options_validate' );
 add_settings_section('tbbxls_plugin_main', 'Main Settings', 'plugin_section_text', 'tbbxls');
-add_settings_field('tbbxls_plugin_text_string', 'Plugin Text Input', 'tbbxls_plugin_setting_string', 'tbbxls', 'tbbxls_plugin_main');
+add_settings_field('tbbxls_plugin_text_string', 'Items in row:', 'tbbxls_plugin_setting_string', 'tbbxls', 'tbbxls_plugin_main');
 }
 function plugin_section_text() {
-echo '<p>Main description of this section here.</p>';
+echo '<p>Set slider parameters.</p>';
 }
 function tbbxls_plugin_setting_string() {
 $options = get_option('tbbxls_options');
