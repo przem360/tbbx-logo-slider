@@ -3,19 +3,10 @@
     Plugin Name: Logo Slider
     Description: Simple marketing coops logo slider
     Author: Przemysław Wolski
-    Version: 0.0.2
+    Version: 0.1.0
 */
 
-/* update wordpress jQuery */
-function modify_jquery() {
-    if (!is_admin()) {
-        // comment out the next two lines to load the local copy of jQuery
-        wp_deregister_script('jquery');
-        wp_register_script('jquery', plugins_url('js/jquery-3.2.1.min.js', __FILE__), false, '1.8.1');
-        wp_enqueue_script('jquery');
-    }
-}
-add_action('init', 'modify_jquery');
+include 'tbbx-ls-options.php';
 
 /* creating tls_images post type */
 function tls_init() {
@@ -90,12 +81,6 @@ function tls_logo_url_save( $post_id, $post ) {
 }
 add_action( 'save_post', 'tls_logo_url_save', 1, 2 );
 
-
-
-
-
-
-
 /* registering scripts and styles */
 add_action('wp_print_scripts', 'tls_register_scripts');
 add_action('wp_print_styles', 'tls_register_styles');
@@ -103,23 +88,19 @@ add_action('wp_print_styles', 'tls_register_styles');
 function tls_register_scripts() {
     if (!is_admin()) {
         // register
-		wp_register_script('tls_bx', plugins_url('js/jquery.bxslider.min.js', __FILE__), array( 'jquery' ));
-        wp_register_script('tls_script', plugins_url('js/tls.slider.js', __FILE__));
+		wp_register_script('tls_tiny', plugins_url('js/tiny-slider.js', __FILE__));
  
         // enqueue
-        wp_enqueue_script('tls_bx');
-        wp_enqueue_script('tls_script');
+		wp_enqueue_script('tls_tiny');
     }
 }
  
 function tls_register_styles() {
     // register
-    wp_register_style('tls_bx_styles', plugins_url('css/jquery.bxslider.min.css', __FILE__));
-    wp_register_style('tls_own_styles', plugins_url('css/tls.own.styles.css', __FILE__));
+	wp_register_style('tiny_slider_styles', plugins_url('css/tiny-slider.css', __FILE__));
  
     // enqueue
-    wp_enqueue_style('tls_bx_styles');
-    wp_enqueue_style('tls_own_styles');
+	wp_enqueue_style('tiny_slider_styles');
 }
 
 /* slider image sizes*/
@@ -131,23 +112,38 @@ function tls_function($type='tls_function') {
         'post_type' => 'tls_images',
         'posts_per_page' => 5
     );
-    $result = '<div class="tls-slider">';
-    $result .= '<ul class="bxslider">';
+    //$result = '<div class="tls-slider">';
+    //$result .= '<ul class="bxslider">';
+	$result = '<div class="my-slider">'. "\xA";
  
     //the loop
     $loop = new WP_Query($args);
     while ($loop->have_posts()) {
         $loop->the_post();
 		$linkurl = get_post_meta( get_the_id(), 'url', true );
-        $the_url = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), $type);
+        $the_url = wp_get_attachment_image_src(get_post_thumbnail_id(get_the_id()), $type);
 		if (!$linkurl) {
-        $result .='<li><img title="'.get_the_title().'" src="' . $the_url[0] . '" data-thumb="' . $the_url[0] . '" alt=""/></li>';
+        $result .='<div><img title="'.get_the_title().'" src="' . $the_url[0] . '" data-thumb="' . $the_url[0] . '" alt=""/></div>'. "\xA";
 		} else {
-		$result .='<li><a href="'.$linkurl.'" target="_blank"><img title="'.get_the_title().'" src="' . $the_url[0] . '" data-thumb="' . $the_url[0] . '" alt=""/></a></li>';	
+		$result .='<div><a href="'.$linkurl.'" target="_blank"><img title="'.get_the_title().'" src="' . $the_url[0] . '" data-thumb="' . $the_url[0] . '" alt=""/></a></div>'. "\xA";	
 		}
     }
-	$result .= '</ul>';
-    $result .= '</div>';
+	$itemcounter = get_option( 'tbbxls_options' );
+	$itemcounter = $itemcounter['items_counter'];
+	//$result .= '</ul>';
+    $result .= '</div>'. "\xA";
+	$result .= '<script>'. "\xA";
+	$result .= '  var slider = tns({'. "\xA";
+	$result .= 'container: \'.my-slider\','. "\xA";
+	$result .= 'items: '.$itemcounter.','. "\xA";
+	$result .= 'controls: false,'. "\xA";
+	$result .= 'nav: false,'. "\xA";
+	$result .= 'slideBy: \'page\','. "\xA";
+	$result .= 'autoplay: true,'. "\xA";
+	$result .= 'autoplayButtonOutput: false'. "\xA";
+	$result .= '});'. "\xA";
+	$result .= 'console.log(\'joe\');'. "\xA";
+	$result .= '</script>'. "\xA";
     return $result;
 }
 
